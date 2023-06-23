@@ -71,21 +71,33 @@ LeftOvers <-
 ```
 
 My answer here.......
+First we search Addresses without the pattern of street, road, (both abbreviated) or road (full word) then it finds if it doesn't have APT or Unit, and lastly finds if it doesn't have Box in it's name. The reason why Box is in one of the variables is because it was named "B0X" with the O being a zero instead of an "O".
 
 #### Part 2: Implement your method on the entire `Addresses` data set. Explain how your code works line by line.
 
 ```{r}
-
-
-
+pattern <- "(ST|RD|ROAD|WAY|CIR|LN|DR|DRIVE|CT|LANE|CO|BLVD|AVE|AVENUE|BLV)"
+NewLeftOvers <-
+  Addresses %>% 
+  filter( grepl(pattern, address),
+          grepl("\\sAPT|UNIT\\s[\\d]+$", address)
+          ) %>%
+  mutate(streetending = str_extract(address, pattern))
 ```
 
 My answer here.......
+This time its just the same code from Part 1 but I am searching for street, road, way, "cir", lane, drive, "ct", boulevard, avenue, and "co" as well as finding if there are APT, or Unit in the address.
 
 #### Additional Question 1: Present your result from part 2 by providing a table in descending order of popularity for the street name endings you found
 
 ```{r}
+StreetNameEndings <-
+  NewLeftOvers %>%
+  group_by(streetending) %>%
+  summarise(cases = n()) %>%
+  arrange( desc(cases) )
 
+head(StreetNameEndings)
 
 ```
 
@@ -94,9 +106,11 @@ My answer here.......
 Note: make sure your order street names according to popularity, not alphabetically.
 
 ```{r}
-
+StreetNameEndings %>% 
+  ggplot(aes(x = streetending, y = cases)) + 
+  geom_bar(stat = "identity")
 ```
 
 #### Additional Question 3: Comment on any patterns you see
 
-My answer here.......
+"ST" seems to be the most common as well as "CIR" and "LANE" are similar in the amount of it used in the Addresses table. Drive (abbreviated) is second, road (abbreviated) is third and avenue (abbreviated) is fourth. With this the abbreviated words are the most common.
