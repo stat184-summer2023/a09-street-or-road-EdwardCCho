@@ -1,15 +1,23 @@
 ---
 title: "Activity: Street or Road?"
-author: "YOUR NAME HERE"
+author: "Edward Cho"
 output: html_notebook
 ---
 
 ## Load in the data
 
 ```{r}
-#load libraries 
+#load libraries
 
-#load in the data here 
+library(tidyverse)
+
+#load in the data here
+
+download.file( url = "https://mdbeckman.github.io/dcSupplement/data/street-addresses.csv", destfile = "street-addresses.csv")
+DataTable1 <- read.csv("street-addresses.csv")
+download.file( url = "https://mdbeckman.github.io/dcSupplement/data/CMS_ProvidersSimple.rds", destfile = "CMSProvidersSimple.rds")
+DataTable2 <- readRDS("CMSProvidersSimple.rds")
+
 # we will only be using the "street-addresses.csv" file from the text
 
 
@@ -19,21 +27,29 @@ output: html_notebook
 ## Recreate Solved Example using `sample(50)`
 
 ```{r}
-
+Addresses <- read_csv("https://mdbeckman.github.io/dcSupplement/data/street-addresses.csv")
+Sample <- 
+  Addresses %>%
+  sample_n(size = 50)
 
 ```
 
-## Recreate Soved Example using the entire `Address` data set
+## Recreate Solved Example using the entire `Address` data set
 
 ```{r}
+pattern <- "BOX\\s+(\\d+)"
 
-
+BoxNumbers <- 
+  Addresses %>%
+  filter(grepl(pattern, address)) %>%
+  tidyr::extract(address, into = "boxnum", regex = pattern)
 ```
 
 #### Additional Question: How many addresses are a PO BOX (including NCSU BOX)? 
 
 ```{r}
-
+BoxNumbers %>%
+  summarise( Cases = n())
 
 ```
 
